@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRS Visa Processing</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root[data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border: #e5e7eb;
+            --primary: #2563eb;
+            --primary-light: #60a5fa;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --hover-bg: #f8fafc;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border: #374151;
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #eab308;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --hover-bg: #2d3748;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Login Screen Styles */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: var(--bg-secondary);
+        }
+
+        .login-card {
+            background: var(--bg-primary);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        .google-btn {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .google-btn:hover {
+            background: var(--hover-bg);
+        }
+
+        .google-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Main App Styles */
+        .app-container {
+            display: none;
+        }
+
+        /* Previous styles remain unchanged */
+        /* Include all the existing styles from the previous version */
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 12px;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <img src="https://raw.githubusercontent.com/anandvip/qrs-resources/refs/heads/main/QRS-removebg-preview.png" alt="QRS Logo" class="login-logo">
+            <button id="googleSignInButton" class="google-btn">
+                <img src="/api/placeholder/24/24" alt="Google Logo">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App (Initially Hidden) -->
+    <div id="appContainer" class="app-container">
+        <!-- Previous app content remains unchanged -->
+        <!-- Include all the existing HTML structure -->
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup,
+            signInWithRedirect,
+            getRedirectResult,
+            signOut,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            updateDoc, 
+            deleteDoc, 
+            doc, 
+            onSnapshot, 
+            query, 
+            orderBy, 
+            where 
+        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAge8ocbBjPn4sFTyqLJJIEKe3DTBNozA",
+            authDomain: "qrs-visa.firebaseapp.com",
+            projectId: "qrs-visa",
+            storageBucket: "qrs-visa.firebasestorage.app",
+            messagingSenderId: "1010222063111",
+            appId: "1:1010222063111:web:adc7b5fde64c2c3206d4a2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // Make services available globally
+        window.auth = auth;
+        window.db = db;
+        window.firestore = { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, where };
+
+        // Auth State Observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                updateUserProfile(user);
+                initializeFirestoreListeners();
+            } else {
+                // User is signed out
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('appContainer').style.display = 'none';
+            }
+        });
+
+        // Google Sign-In
+        document.getElementById('googleSignInButton').onclick = async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error('Sign-in error:', error);
+                showToast('Sign-in failed: ' + error.message, 'error');
+            }
+        };
+
+        // Also support One-Tap Sign-In
+        window.onload = () => {
+            google.accounts.id.initialize({
+                client_id: '1010222063111-YOUR-CLIENT-ID.apps.googleusercontent.com', // Replace with your client ID
+                callback: handleCredentialResponse
+            });
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignInButton'),
+                { theme: 'outline', size: 'large' }
+            );
+            google.accounts.id.prompt();
+        };
+
+        function handleCredentialResponse(response) {
+            const credential = GoogleAuthProvider.credential(response.credential);
+            signInWithCredential(auth, credential)
+                .catch((error) => {
+                    console.error('One-tap sign-in error:', error);
+                    showToast('Sign-in failed: ' + error.message, 'error');
+                });
+        }
+
+        // Sign Out
+        window.signOut = async () => {
+            try {
+                await signOut(auth);
+                showToast('Signed out successfully', 'success');
+            } catch (error) {
+                console.error('Sign-out error:', error);
+                showToast('Sign-out failed: ' + error.message, 'error');
+            }
+        };
+
+        // Update User Profile
+        function updateUserProfile(user) {
+            const userProfileElement = document.querySelector('.user-profile');
+            if (userProfileElement) {
+                userProfileElement.innerHTML = `
+                    <img src="${user.photoURL || '/api/placeholder/40/40'}" alt="Profile" class="user-avatar">
+                    <div class="user-info">
+                        <span class="user-name">${user.displayName}</span>
+                        <span class="user-email">${user.email}</span>
+                    </div>
+                    <button onclick="signOut()" class="logout-btn">Sign Out</button>
+                `;
+            }
+        }
+
+        // Initialize Firestore Listeners
+        function initializeFirestoreListeners() {
+            const userId = auth.currentUser.uid;
+            const applicationsRef = collection(db, 'applications');
+            const q = query(
+                applicationsRef,
+                where('userId', '==', userId),
+                orderBy('submittedDate', 'desc')
+            );
+
+            onSnapshot(q, 
+                (snapshot) => {
+                    const applications = [];
+                    snapshot.forEach((doc) => {
+                        applications.push({ id: doc.id, ...doc.data() });
+                    });
+                    window.handleApplicationsUpdate(applications);
+                },
+                (error) => {
+                    console.error('Firestore listener error:', error);
+                    showToast('Error loading applications: ' + error.message, 'error');
+                }
+            );
+        }
+    </script>
+ </script>
+
+    <!-- Offline Indicator -->
+    <div class="offline-indicator">
+        <i class="fas fa-wifi-slash"></i> Offline Mode
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-switcher" onclick="toggleTheme()">
+        <i class="theme-icon fas fa-sun"></i>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <img src="https://raw.githubusercontent.com/anandvip/qrs-resources/refs/heads/main/QRS-removebg-preview.png" alt="QRS Logo" class="logo">
+                <h1>Visa Processing System</h1>
+            </div>
+        </header>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Search applications..."
+                    id="searchInput"
+                    onkeyup="debounce(handleSearch, 300)(this.value)"
+                >
+            </div>
+            <div class="filters">
+                <select class="select-control" id="statusFilter" onchange="handleFilters()">
+                    <option value="">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+                <select class="select-control" id="sortBy" onchange="handleFilters()">
+                    <option value="submittedDate">Sort by Date</option>
+                    <option value="name">Sort by Name</option>
+                    <option value="status">Sort by Status</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Application Form -->
+        <section class="form-section">
+            <h2>New Application</h2>
+            <form id="applicationForm" onsubmit="handleSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Passport Number</label>
+                        <input type="text" name="passport" required pattern="[A-Z0-9]{8,}" 
+                               placeholder="e.g., AB1234567">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" name="phone" required pattern="[0-9]{10}" 
+                               placeholder="10 digits">
+                    </div>
+                    <div class="form-group">
+                        <label>Passport Expiry Date</label>
+                        <input type="date" name="expiryDate" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Submit Application
+                </button>
+            </form>
+        </section>
+
+        <!-- Applications Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" onchange="toggleAllCheckboxes(this)"></th>
+                        <th onclick="sortBy('name')">Name <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('email')">Email <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('passport')">Passport <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('expiryDate')">Expiry Date <i class="fas fa-sort"></i></th>
+                        <th onclick="sortBy('status')">Status <i class="fas fa-sort"></i></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationsTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Export Actions -->
+        <div class="export-actions">
+            <button class="btn btn-primary" onclick="exportToEmail()">
+                <i class="fas fa-envelope"></i> Email to Lawyer
+            </button>
+            <button class="btn btn-primary" onclick="exportToCSV()">
+                <i class="fas fa-file-export"></i> Export CSV
+            </button>
+        </div>
+    </div>
+<!-- Add this just before closing body tag -->
+   
+    <script>
+        // Application State
+        let applications = [];
+        let filteredApplications = [];
+        let currentSort = { field: 'submittedDate', direction: 'desc' };
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        let isOffline = !navigator.onLine;
+
+        // Loading State Management
+        function showLoading(show = true) {
+            document.querySelector('.loading-overlay').style.display = show ? 'flex' : 'none';
+        }
+
+        // Theme Management
+        function initializeTheme() {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon();
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', currentTheme);
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const icon = document.querySelector('.theme-icon');
+            icon.className = `theme-icon fas ${currentTheme === 'light' ? 'fa-moon' : 'fa-sun'}`;
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                className: `custom-toast toast-${type}`,
+                stopOnFocus: true,
+                close: true,
+                style: {
+                    background: 'var(--bg-primary)',
+                    color: 'var(--text-primary)'
+                }
+            }).showToast();
+        }
+
+        // Offline Support
+        function updateOnlineStatus() {
+            isOffline = !navigator.onLine;
+            document.querySelector('.offline-indicator').style.display = isOffline ? 'block' : 'none';
+            if (isOffline) {
+                showToast('You are offline. Changes will be synchronized when connection is restored.', 'warning');
+            } else {
+                showToast('Back online. Syncing changes...', 'success');
+            }
+        }
+
+        // Firestore Operations
+        async function addApplication(applicationData) {
+            try {
+                showLoading();
+                const docRef = await window.firestore.addDoc(
+                    window.firestore.collection(window.db, 'applications'),
+                    applicationData
+                );
+                showToast('Application submitted successfully', 'success');
+                return docRef.id;
+            } catch (error) {
+                console.error('Error adding application:', error);
+                showToast('Error submitting application: ' + error.message, 'error');
+                throw error;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function updateApplication(id, updates) {
+            try {
+                showLoading();
+                const docRef = window.firestore.doc(window.db, 'applications', id);
+                await window.firestore.updateDoc(docRef, updates);
+                showToast('Application updated successfully', 'success');
+            } catch (error) {
+                console.error('Error updating application:', error);
+                showToast('Error updating application: ' + error.message, 'error');
+                throw error;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function deleteApplication(id) {
+            try {
+                if (!confirm('Are you sure you want to delete this application? This action cannot be undone.')) {
+                    return;
+                }
+                
+                showLoading();
+                const docRef = window.firestore.doc(window.db, 'applications', id);
+                await window.firestore.deleteDoc(docRef);
+                showToast('Application deleted successfully', 'success');
+            } catch (error) {
+                console.error('Error deleting application:', error);
+                showToast('Error deleting application: ' + error.message, 'error');
+                throw error;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Search and Filter Functions
+        function handleSearch(query) {
+            query = query.toLowerCase().trim();
+            applyFilters();
+        }
+
+        function handleFilters() {
+            applyFilters();
+        }
+      // Add this to your existing JavaScript code
+function renderApplications() {
+    const tbody = document.getElementById('applicationsTable');
+    tbody.innerHTML = '';
+
+    if (filteredApplications.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="no-results">
+                    No applications found matching your criteria
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    filteredApplications.forEach(app => {
+        const row = document.createElement('tr');
+                
+        // Checkbox cell
+        const checkboxCell = document.createElement('td');
+        checkboxCell.className = 'checkbox-cell';
+        checkboxCell.innerHTML = `<input type="checkbox" data-id="${app.id}">`;
+        row.appendChild(checkboxCell);
+
+        // Editable cells with tooltips
+        const editableCells = [
+            { field: 'name', value: app.name, tooltip: 'Click to edit name' },
+            { field: 'email', value: app.email, tooltip: 'Click to edit email' },
+            { field: 'passport', value: app.passport, tooltip: 'Click to edit passport number' },
+            { field: 'expiryDate', value: new Date(app.expiryDate).toLocaleDateString(), tooltip: 'Click to edit expiry date' }
+        ];
+
+        editableCells.forEach(({ field, value, tooltip }) => {
+            const cell = document.createElement('td');
+            cell.className = 'editable-cell';
+            cell.title = tooltip;
+            makeEditable(cell, value, field, app.id);
+            row.appendChild(cell);
+        });
+
+        // Status cell with badge
+        const statusCell = document.createElement('td');
+        statusCell.className = 'editable-cell';
+        const statusBadge = document.createElement('span');
+        statusBadge.className = `status-badge status-${app.status.toLowerCase()}`;
+        statusBadge.textContent = app.status;
+        statusBadge.title = 'Click to change status';
+        statusCell.appendChild(statusBadge);
+        
+        statusCell.onclick = () => {
+            const select = document.createElement('select');
+            select.className = 'status-select';
+            ['Pending', 'Approved', 'Rejected'].forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                option.selected = status === app.status;
+                select.appendChild(option);
+            });
+            
+            select.onchange = () => {
+                updateApplication(app.id, { status: select.value });
+                statusCell.removeChild(select);
+            };
+            
+            select.onblur = () => statusCell.removeChild(select);
+            statusCell.appendChild(select);
+            select.focus();
+        };
+        
+        row.appendChild(statusCell);
+
+        // Actions cell
+        const actionsCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn btn-danger';
+        deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteButton.onclick = () => deleteApplication(app.id);
+        actionsCell.appendChild(deleteButton);
+        row.appendChild(actionsCell);
+
+        tbody.appendChild(row);
+    });
+}
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const sortField = document.getElementById('sortBy').value;
+
+            // Apply search filter
+            filteredApplications = applications.filter(app => {
+                const matchesSearch = !query || 
+                    app.name.toLowerCase().includes(query) ||
+                    app.email.toLowerCase().includes(query) ||
+                    app.passport.toLowerCase().includes(query) ||
+                    app.phone.includes(query);
+
+                const matchesStatus = !statusFilter || app.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            // Apply sorting
+            currentSort.field = sortField;
+            sortApplications();
+            renderApplications();
+        }
+
+        function sortApplications() {
+            filteredApplications.sort((a, b) => {
+                let compareResult = 0;
+                switch(currentSort.field) {
+                    case 'name':
+                        compareResult = a.name.localeCompare(b.name);
+                        break;
+                    case 'status':
+                        compareResult = a.status.localeCompare(b.status);
+                        break;
+                    case 'submittedDate':
+                    default:
+                        compareResult = new Date(b.submittedDate) - new Date(a.submittedDate);
+                }
+                return currentSort.direction === 'asc' ? compareResult : -compareResult;
+            });
+        }
+
+        // Form Handling
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            if (!validateDate(formData.get('expiryDate'))) {
+                showToast('Passport must be valid for at least 6 months', 'error');
+                return;
+            }
+
+            const applicationData = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                passport: formData.get('passport').toUpperCase(),
+                phone: formData.get('phone'),
+                expiryDate: formData.get('expiryDate'),
+                status: 'Pending',
+                submittedDate: new Date().toISOString()
+            };
+
+            try {
+                await addApplication(applicationData);
+                form.reset();
+            } catch (error) {
+                // Error already handled in addApplication
+            }
+        }
+
+        // Validation Functions
+        function validateDate(date) {
+            const expiryDate = new Date(date);
+            const minDate = new Date();
+            minDate.setMonth(minDate.getMonth() + 6);
+            return expiryDate >= minDate;
+        }
+
+        // Editable Fields Management
+        function makeEditable(cell, value, field, id) {
+            const display = document.createElement('div');
+            display.textContent = value;
+            display.className = 'editable';
+            
+            display.onclick = () => {
+                const input = document.createElement(field === 'expiryDate' ? 'input' : 'input');
+                input.type = field === 'expiryDate' ? 'date' : 'text';
+                input.value = field === 'expiryDate' ? value.split('/').reverse().join('-') : value;
+                input.className = 'edit-input';
+
+                const saveChanges = async () => {
+                    const newValue = input.value;
+                    if (newValue !== value) {
+                        await updateApplication(id, { [field]: newValue });
+                    }
+                    cell.removeChild(input);
+                    display.style.display = 'block';
+                };
+
+                input.onblur = saveChanges;
+                input.onkeydown = (e) => {
+                    if (e.key === 'Enter') saveChanges();
+                    if (e.key === 'Escape') {
+                        cell.removeChild(input);
+                        display.style.display = 'block';
+                    }
+                };
+
+                display.style.display = 'none';
+                cell.appendChild(input);
+                input.focus();
+            };
+
+            cell.appendChild(display);
+        }
+
+        // Export Functions
+        function exportToEmail() {
+            const selected = getSelectedApplications();
+            if (selected.length === 0) {
+                showToast('Please select applications to export', 'error');
+                return;
+            }
+
+            let emailBody = 'Visa Applications Summary:\n\n';
+            selected.forEach(app => {
+                emailBody += `
+Applicant: ${app.name}
+Email: ${app.email}
+Passport: ${app.passport}
+Expiry: ${new Date(app.expiryDate).toLocaleDateString()}
+Status: ${app.status}
+Contact: ${app.phone}
+Submitted: ${new Date(app.submittedDate).toLocaleDateString()}
+------------------------
+`;
+            });
+
+            window.location.href = `mailto:?subject=Visa Applications Export&body=${encodeURIComponent(emailBody)}`;
+            showToast(`Prepared email with ${selected.length} application(s)`, 'success');
+        }
+
+        function exportToCSV() {
+            const selected = getSelectedApplications();
+            if (selected.length === 0) {
+                showToast('Please select applications to export', 'error');
+                return;
+            }
+
+            const headers = ['Name', 'Email', 'Passport', 'Expiry Date', 'Status', 'Phone', 'Submitted Date'];
+            const csv = [
+                headers.join(','),
+                ...selected.map(app => [
+                    app.name,
+                    app.email,
+                    app.passport,
+                    app.expiryDate,
+                    app.status,
+                    app.phone,
+                    new Date(app.submittedDate).toLocaleDateString()
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'visa-applications.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast(`Exported ${selected.length} application(s) to CSV`, 'success');
+        }
+
+        // Selection Management
+        function getSelectedApplications() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]:checked');
+            return Array.from(checkboxes).map(cb => 
+                applications.find(app => app.id === cb.dataset.id)
+            );
+        }
+
+        function toggleAllCheckboxes(mainCheckbox) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+            checkboxes.forEach(cb => cb.checked = mainCheckbox.checked);
+        }
+
+        // Utility Functions
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Real-time Updates Handler
+        window.handleApplicationsUpdate = function(newApplications) {
+            applications = newApplications;
+            applyFilters();
+        };
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTheme();
+            updateOnlineStatus();
+            showToast('Welcome to QRS Visa Processing System', 'info');
+        });
+
+        // Online/Offline Event Listeners
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
+</body>
+</html>
