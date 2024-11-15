@@ -7,6 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* Theme Variables */
         :root[data-theme="light"] {
             --bg-primary: #ffffff;
             --bg-secondary: #f3f4f6;
@@ -37,6 +38,7 @@
             --hover-bg: #2d3748;
         }
 
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -53,7 +55,7 @@
             flex-direction: column;
         }
 
-        /* Login Screen Styles */
+        /* Login Screen */
         .login-container {
             display: flex;
             flex-direction: column;
@@ -100,24 +102,46 @@
             background: var(--hover-bg);
         }
 
-        .google-btn img {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* Main App Styles */
+        /* Main App Container */
         .app-container {
             display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        /* Previous styles remain unchanged */
-        /* Include all the existing styles from the previous version */
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
 
         /* User Profile */
         .user-profile {
             display: flex;
             align-items: center;
             gap: 12px;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
         }
 
         .user-avatar {
@@ -141,37 +165,110 @@
             color: var(--text-secondary);
         }
 
-        .logout-btn {
-            padding: 8px 16px;
-            background: var(--danger);
-            color: white;
+        /* Theme Switcher */
+        .theme-switcher {
+            background: none;
             border: none;
-            border-radius: 6px;
+            color: var(--text-primary);
             cursor: pointer;
-            font-size: 14px;
+            padding: 8px;
+            font-size: 20px;
             margin-left: 12px;
         }
 
-        .logout-btn:hover {
-            opacity: 0.9;
+        /* Form Section */
+        .form-section {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
         }
-    </style>
-        <style>
-                /* Theme Variables */
-        :root[data-theme="light"] {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f3f4f6;
-            --text-primary: #1f2937;
-            --text-secondary: #4b5563;
-            --border: #e5e7eb;
-            --primary: #2563eb;
-            --primary-light: #60a5fa;
-            --danger: #dc2626;
-            --success: #16a34a;
-            --warning: #ca8a04;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --hover-bg: #f8fafc;
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
         }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        tr:hover td {
+            background: var(--hover-bg);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-approved {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-rejected {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Loading State */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -182,267 +279,37 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 1000;
         }
 
         .loading-spinner {
             width: 50px;
             height: 50px;
-            border: 4px solid var(--gray);
-            border-top: 4px solid var(--primary);
+            border: 4px solid var(--bg-primary);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .offline-indicator {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: var(--danger);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            display: none;
-            z-index: 1000;
-        }
-       <style>
-        /* Theme Variables */
-        :root[data-theme="light"] {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f3f4f6;
-            --text-primary: #1f2937;
-            --text-secondary: #4b5563;
-            --border: #e5e7eb;
-            --primary: #2563eb;
-            --primary-light: #60a5fa;
-            --danger: #dc2626;
-            --success: #16a34a;
-            --warning: #ca8a04;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --hover-bg: #f8fafc;
-        }
-
-        :root[data-theme="dark"] {
-            --bg-primary: #1f2937;
-            --bg-secondary: #111827;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --border: #374151;
-            --primary: #3b82f6;
-            --primary-light: #60a5fa;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #eab308;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            --hover-bg: #2d3748;
-        }
-
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body {
-            font-family: -apple-system, system-ui, sans-serif;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            line-height: 1.5;
-            margin: 0;
-            padding: 20px;
-        }
-
-        /* Theme Switcher */
-        .theme-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--card-shadow);
-            z-index: 1000;
-        }
-
-        .theme-switcher:hover {
-            background: var(--hover-bg);
-        }
-
-        .theme-icon {
-            font-size: 20px;
-            color: var(--text-primary);
-        }
-
-        /* Layout */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--bg-primary);
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .logo {
-            height: 50px;
-            width: auto;
-        }
-
-        .header h1 {
-            color: var(--text-primary);
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        /* Control Panel */
-        .control-panel {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 16px;
-            margin-bottom: 24px;
-            align-items: center;
-        }
-
-        .search-bar {
-            position: relative;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 12px 12px 40px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .filters {
-            display: flex;
-            gap: 12px;
-        }
-
-        .select-control {
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 16px;
-            cursor: pointer;
-            min-width: 150px;
-        }
-
-        .select-control:focus {
-            outline: none;
-            border-color: var(--primary-light);
-        }
-
-        /* Form Section */
-        .form-section {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .form-section h2 {
-            margin-bottom: 24px;
-            color: var(--text-primary);
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            to { transform: rotate(360deg); }
         }
 
         /* Buttons */
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            transition: opacity 0.2s;
         }
 
-        .btn i {
-            font-size: 18px;
+        .btn:hover {
+            opacity: 0.9;
         }
 
         .btn-primary {
@@ -450,179 +317,139 @@
             color: white;
         }
 
-        .btn-primary:hover {
-            background: var(--primary-light);
-        }
-
         .btn-danger {
             background: var(--danger);
             color: white;
         }
 
-        /* Table Styles */
-        .table-container {
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-top: 24px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-
-        th {
-            background: var(--bg-secondary);
-            font-weight: 600;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        th:hover {
-            background: var(--hover-bg);
-        }
-
-        th i {
-            margin-left: 8px;
-            color: var(--text-secondary);
-        }
-
-        tr:hover td {
-            background: var(--hover-bg);
-        }
-
-        /* Status Badges */
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-weight: 500;
-            text-align: center;
-            display: inline-block;
-            min-width: 100px;
-        }
-
-        .status-pending {
-            background: var(--warning);
-            color: var(--bg-primary);
-        }
-
-        .status-approved {
-            background: var(--success);
-            color: var(--bg-primary);
-        }
-
-        .status-rejected {
-            background: var(--danger);
-            color: var(--bg-primary);
-        }
-
-        /* Editable Cells */
-        .editable {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .editable:hover::after {
-            content: '✎';
-            position: absolute;
-            right: 8px;
-            color: var(--text-secondary);
-        }
-
-        .edit-input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 16px;
-            border: 2px solid var(--primary);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            z-index: 1;
-        }
-
-        /* Custom Toast Styling */
-        .custom-toast {
+        /* Toast Overrides */
+        .toastify {
             background: var(--bg-primary) !important;
             color: var(--text-primary) !important;
-            border-radius: 8px !important;
-            padding: 16px !important;
             box-shadow: var(--card-shadow) !important;
         }
-
-        .toast-success {
-            border-left: 4px solid var(--success) !important;
-        }
-
-        .toast-error {
-            border-left: 4px solid var(--danger) !important;
-        }
-
-        .toast-info {
-            border-left: 4px solid var(--primary) !important;
-        }
- .no-results {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-secondary);
-    font-style: italic;
-}
-
     </style>
 </head>
 <body>
     <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
         <div class="login-card">
-            <img src="https://raw.githubusercontent.com/anandvip/qrs-resources/refs/heads/main/QRS-removebg-preview.png" alt="QRS Logo" class="login-logo">
+            <img src="https://raw.githubusercontent.com/anandvip/qrs-resources/refs/heads/main/QRS-removebg-preview.png" 
+                 alt="QRS Logo" class="login-logo">
             <button id="googleSignInButton" class="google-btn">
                 <img src="/api/placeholder/24/24" alt="Google Logo">
                 Sign in with Google
             </button>
+            <div id="g_id_onload" 
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                 data-context="signin"
+                 data-callback="handleCredentialResponse">
+            </div>
         </div>
     </div>
 
-    <!-- Main App (Initially Hidden) -->
+    <!-- Main Application -->
     <div id="appContainer" class="app-container">
-        <!-- Previous app content remains unchanged -->
-        <!-- Include all the existing HTML structure -->
+        <header class="header">
+            <div class="header-left">
+                <img src="https://raw.githubusercontent.com/anandvip/qrs-resources/refs/heads/main/QRS-removebg-preview.png" 
+                     alt="QRS Logo" class="logo">
+                <h1>Visa Processing System</h1>
+            </div>
+            <div class="header-right">
+                <div id="userProfile" class="user-profile">
+                    <!-- User profile will be inserted here -->
+                </div>
+                <button class="theme-switcher" onclick="toggleTheme()">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+        </header>
+
+        <section class="form-section">
+            <h2>New Application</h2>
+            <form id="applicationForm" onsubmit="handleSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passport">Passport Number</label>
+                        <input type="text" id="passport" name="passport" 
+                               pattern="[A-Z0-9]{8,}" required
+                               placeholder="e.g., AB1234567">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" 
+                               pattern="[0-9]{10}" required
+                               placeholder="10 digits">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Passport Expiry Date</label>
+                        <input type="date" id="expiryDate" name="expiryDate" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Submit Application
+                </button>
+            </form>
+        </section>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Passport</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationsTable">
+                    <!-- Applications will be inserted here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Firebase Scripts -->
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <script type="module">
+        // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { 
             getAuth, 
             GoogleAuthProvider, 
-            signInWithPopup,
-            signInWithRedirect,
-            getRedirectResult,
-            signOut,
-            onAuthStateChanged 
+            signInWithPopup, 
+            signOut 
         } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
         import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            updateDoc, 
-            deleteDoc, 
-            doc, 
-            onSnapshot, 
-            query, 
-            orderBy, 
-            where 
+            getFirestore,
+            collection,
+            addDoc,
+            query,
+            where,
+            orderBy,
+            onSnapshot
         } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-        // Firebase configuration
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBAge8ocbBjPn4sFTyqLJJIEKe3DTBNozA",
             authDomain: "qrs-visa.firebaseapp.com",
@@ -638,488 +465,115 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // Make services available globally
-        window.auth = auth;
-        window.db = db;
-        window.firestore = { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, where };
+        // Global state
+        let currentUser = null;
+        let applications = [];
 
-        // Auth State Observer
-        onAuthStateChanged(auth, (user) => {
+        // Auth state observer
+        auth.onAuthStateChanged((user) => {
+            currentUser = user;
             if (user) {
-                // User is signed in
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
                 updateUserProfile(user);
-                initializeFirestoreListeners();
+                initializeFirestore();
             } else {
-                // User is signed out
                 document.getElementById('loginScreen').style.display = 'flex';
                 document.getElementById('appContainer').style.display = 'none';
             }
         });
 
-        // Google Sign-In
-        document.getElementById('googleSignInButton').onclick = async () => {
+        // Initialize Firestore listeners
+        function initializeFirestore() {
+            const applicationsRef = collection(db, 'applications');
+            // Create a compound query
+            const q = query(applicationsRef,
+                where('userId', '==', currentUser.uid),
+                orderBy('submittedDate', 'desc')
+            );
+
+            // Real-time listener
+            onSnapshot(q, (snapshot) => {
+                applications = [];
+                snapshot.forEach((doc) => {
+                    applications.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                renderApplications();
+            }, (error) => {
+                console.error('Firestore listener error:', error);
+                showToast('Error loading applications: ' + error.message, 'error');
+            });
+        }
+
+        // Authentication functions
+        window.handleGoogleSignIn = async () => {
             try {
+                showLoading(true);
                 await signInWithPopup(auth, provider);
+                showToast('Signed in successfully', 'success');
             } catch (error) {
                 console.error('Sign-in error:', error);
                 showToast('Sign-in failed: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
             }
         };
 
-        // Also support One-Tap Sign-In
-        window.onload = () => {
-            google.accounts.id.initialize({
-                client_id: '1010222063111-YOUR-CLIENT-ID.apps.googleusercontent.com', // Replace with your client ID
-                callback: handleCredentialResponse
-            });
-            google.accounts.id.renderButton(
-                document.getElementById('googleSignInButton'),
-                { theme: 'outline', size: 'large' }
-            );
-            google.accounts.id.prompt();
+        window.handleSignOut = async () => {
+            try {
+                showLoading(true);
+                await signOut(auth);
+                showToast('Signed out successfully', 'success');
+            } catch (error) {
+                console.error('Sign-out error:', error);
+                showToast('Sign-out failed: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
         };
 
-        function handleCredentialResponse(response) {
+        // One-tap sign-in handler
+        window.handleCredentialResponse = (response) => {
             const credential = GoogleAuthProvider.credential(response.credential);
             signInWithCredential(auth, credential)
                 .catch((error) => {
                     console.error('One-tap sign-in error:', error);
                     showToast('Sign-in failed: ' + error.message, 'error');
                 });
-        }
-
-        // Sign Out
-        window.signOut = async () => {
-            try {
-                await signOut(auth);
-                showToast('Signed out successfully', 'success');
-            } catch (error) {
-                console.error('Sign-out error:', error);
-                showToast('Sign-out failed: ' + error.message, 'error');
-            }
         };
 
-        // Update User Profile
+        // Update user profile UI
         function updateUserProfile(user) {
-            const userProfileElement = document.querySelector('.user-profile');
-            if (userProfileElement) {
-                userProfileElement.innerHTML = `
-                    <img src="${user.photoURL || '/api/placeholder/40/40'}" alt="Profile" class="user-avatar">
-                    <div class="user-info">
-                        <span class="user-name">${user.displayName}</span>
-                        <span class="user-email">${user.email}</span>
-                    </div>
-                    <button onclick="signOut()" class="logout-btn">Sign Out</button>
-                `;
-            }
-        }
-
-        // Initialize Firestore Listeners
-        function initializeFirestoreListeners() {
-            const userId = auth.currentUser.uid;
-            const applicationsRef = collection(db, 'applications');
-            const q = query(
-                applicationsRef,
-                where('userId', '==', userId),
-                orderBy('submittedDate', 'desc')
-            );
-
-            onSnapshot(q, 
-                (snapshot) => {
-                    const applications = [];
-                    snapshot.forEach((doc) => {
-                        applications.push({ id: doc.id, ...doc.data() });
-                    });
-                    window.handleApplicationsUpdate(applications);
-                },
-                (error) => {
-                    console.error('Firestore listener error:', error);
-                    showToast('Error loading applications: ' + error.message, 'error');
-                }
-            );
-        }
-    </script>
- </script>
-
-    <!-- Offline Indicator -->
-    <div class="offline-indicator">
-        <i class="fas fa-wifi-slash"></i> Offline Mode
-    </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Theme Switcher -->
-    <div class="theme-switcher" onclick="toggleTheme()">
-        <i class="theme-icon fas fa-sun"></i>
-    </div>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <img src="https://raw.githubusercontent.com/anandvip/qrs-resources/refs/heads/main/QRS-removebg-preview.png" alt="QRS Logo" class="logo">
-                <h1>Visa Processing System</h1>
-            </div>
-        </header>
-
-        <!-- Control Panel -->
-        <div class="control-panel">
-            <div class="search-bar">
-                <i class="fas fa-search search-icon"></i>
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    placeholder="Search applications..."
-                    id="searchInput"
-                    onkeyup="debounce(handleSearch, 300)(this.value)"
-                >
-            </div>
-            <div class="filters">
-                <select class="select-control" id="statusFilter" onchange="handleFilters()">
-                    <option value="">All Statuses</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
-                <select class="select-control" id="sortBy" onchange="handleFilters()">
-                    <option value="submittedDate">Sort by Date</option>
-                    <option value="name">Sort by Name</option>
-                    <option value="status">Sort by Status</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Application Form -->
-        <section class="form-section">
-            <h2>New Application</h2>
-            <form id="applicationForm" onsubmit="handleSubmit(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Passport Number</label>
-                        <input type="text" name="passport" required pattern="[A-Z0-9]{8,}" 
-                               placeholder="e.g., AB1234567">
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" name="phone" required pattern="[0-9]{10}" 
-                               placeholder="10 digits">
-                    </div>
-                    <div class="form-group">
-                        <label>Passport Expiry Date</label>
-                        <input type="date" name="expiryDate" required>
-                    </div>
+            const userProfileElement = document.getElementById('userProfile');
+            userProfileElement.innerHTML = `
+                <img src="${user.photoURL || '/api/placeholder/40/40'}" alt="Profile" class="user-avatar">
+                <div class="user-info">
+                    <span class="user-name">${user.displayName}</span>
+                    <span class="user-email">${user.email}</span>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Submit Application
+                <button onclick="handleSignOut()" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
                 </button>
-            </form>
-        </section>
-
-        <!-- Applications Table -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" onchange="toggleAllCheckboxes(this)"></th>
-                        <th onclick="sortBy('name')">Name <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('email')">Email <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('passport')">Passport <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('expiryDate')">Expiry Date <i class="fas fa-sort"></i></th>
-                        <th onclick="sortBy('status')">Status <i class="fas fa-sort"></i></th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="applicationsTable"></tbody>
-            </table>
-        </div>
-
-        <!-- Export Actions -->
-        <div class="export-actions">
-            <button class="btn btn-primary" onclick="exportToEmail()">
-                <i class="fas fa-envelope"></i> Email to Lawyer
-            </button>
-            <button class="btn btn-primary" onclick="exportToCSV()">
-                <i class="fas fa-file-export"></i> Export CSV
-            </button>
-        </div>
-    </div>
-<!-- Add this just before closing body tag -->
-   
-    <script>
-        // Application State
-        let applications = [];
-        let filteredApplications = [];
-        let currentSort = { field: 'submittedDate', direction: 'desc' };
-        let currentTheme = localStorage.getItem('theme') || 'light';
-        let isOffline = !navigator.onLine;
-
-        // Loading State Management
-        function showLoading(show = true) {
-            document.querySelector('.loading-overlay').style.display = show ? 'flex' : 'none';
+            `;
         }
 
-        // Theme Management
-        function initializeTheme() {
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            updateThemeIcon();
-        }
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('theme', currentTheme);
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            updateThemeIcon();
-        }
-
-        function updateThemeIcon() {
-            const icon = document.querySelector('.theme-icon');
-            icon.className = `theme-icon fas ${currentTheme === 'light' ? 'fa-moon' : 'fa-sun'}`;
-        }
-
-        // Toast Notifications
-        function showToast(message, type = 'info') {
-            Toastify({
-                text: message,
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                className: `custom-toast toast-${type}`,
-                stopOnFocus: true,
-                close: true,
-                style: {
-                    background: 'var(--bg-primary)',
-                    color: 'var(--text-primary)'
-                }
-            }).showToast();
-        }
-
-        // Offline Support
-        function updateOnlineStatus() {
-            isOffline = !navigator.onLine;
-            document.querySelector('.offline-indicator').style.display = isOffline ? 'block' : 'none';
-            if (isOffline) {
-                showToast('You are offline. Changes will be synchronized when connection is restored.', 'warning');
-            } else {
-                showToast('Back online. Syncing changes...', 'success');
-            }
-        }
-
-        // Firestore Operations
-        async function addApplication(applicationData) {
-            try {
-                showLoading();
-                const docRef = await window.firestore.addDoc(
-                    window.firestore.collection(window.db, 'applications'),
-                    applicationData
-                );
-                showToast('Application submitted successfully', 'success');
-                return docRef.id;
-            } catch (error) {
-                console.error('Error adding application:', error);
-                showToast('Error submitting application: ' + error.message, 'error');
-                throw error;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function updateApplication(id, updates) {
-            try {
-                showLoading();
-                const docRef = window.firestore.doc(window.db, 'applications', id);
-                await window.firestore.updateDoc(docRef, updates);
-                showToast('Application updated successfully', 'success');
-            } catch (error) {
-                console.error('Error updating application:', error);
-                showToast('Error updating application: ' + error.message, 'error');
-                throw error;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function deleteApplication(id) {
-            try {
-                if (!confirm('Are you sure you want to delete this application? This action cannot be undone.')) {
-                    return;
-                }
-                
-                showLoading();
-                const docRef = window.firestore.doc(window.db, 'applications', id);
-                await window.firestore.deleteDoc(docRef);
-                showToast('Application deleted successfully', 'success');
-            } catch (error) {
-                console.error('Error deleting application:', error);
-                showToast('Error deleting application: ' + error.message, 'error');
-                throw error;
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Search and Filter Functions
-        function handleSearch(query) {
-            query = query.toLowerCase().trim();
-            applyFilters();
-        }
-
-        function handleFilters() {
-            applyFilters();
-        }
-      // Add this to your existing JavaScript code
-function renderApplications() {
-    const tbody = document.getElementById('applicationsTable');
-    tbody.innerHTML = '';
-
-    if (filteredApplications.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="no-results">
-                    No applications found matching your criteria
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    filteredApplications.forEach(app => {
-        const row = document.createElement('tr');
-                
-        // Checkbox cell
-        const checkboxCell = document.createElement('td');
-        checkboxCell.className = 'checkbox-cell';
-        checkboxCell.innerHTML = `<input type="checkbox" data-id="${app.id}">`;
-        row.appendChild(checkboxCell);
-
-        // Editable cells with tooltips
-        const editableCells = [
-            { field: 'name', value: app.name, tooltip: 'Click to edit name' },
-            { field: 'email', value: app.email, tooltip: 'Click to edit email' },
-            { field: 'passport', value: app.passport, tooltip: 'Click to edit passport number' },
-            { field: 'expiryDate', value: new Date(app.expiryDate).toLocaleDateString(), tooltip: 'Click to edit expiry date' }
-        ];
-
-        editableCells.forEach(({ field, value, tooltip }) => {
-            const cell = document.createElement('td');
-            cell.className = 'editable-cell';
-            cell.title = tooltip;
-            makeEditable(cell, value, field, app.id);
-            row.appendChild(cell);
-        });
-
-        // Status cell with badge
-        const statusCell = document.createElement('td');
-        statusCell.className = 'editable-cell';
-        const statusBadge = document.createElement('span');
-        statusBadge.className = `status-badge status-${app.status.toLowerCase()}`;
-        statusBadge.textContent = app.status;
-        statusBadge.title = 'Click to change status';
-        statusCell.appendChild(statusBadge);
-        
-        statusCell.onclick = () => {
-            const select = document.createElement('select');
-            select.className = 'status-select';
-            ['Pending', 'Approved', 'Rejected'].forEach(status => {
-                const option = document.createElement('option');
-                option.value = status;
-                option.textContent = status;
-                option.selected = status === app.status;
-                select.appendChild(option);
-            });
-            
-            select.onchange = () => {
-                updateApplication(app.id, { status: select.value });
-                statusCell.removeChild(select);
-            };
-            
-            select.onblur = () => statusCell.removeChild(select);
-            statusCell.appendChild(select);
-            select.focus();
-        };
-        
-        row.appendChild(statusCell);
-
-        // Actions cell
-        const actionsCell = document.createElement('td');
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'btn btn-danger';
-        deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
-        deleteButton.onclick = () => deleteApplication(app.id);
-        actionsCell.appendChild(deleteButton);
-        row.appendChild(actionsCell);
-
-        tbody.appendChild(row);
-    });
-}
-
-        function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const sortField = document.getElementById('sortBy').value;
-
-            // Apply search filter
-            filteredApplications = applications.filter(app => {
-                const matchesSearch = !query || 
-                    app.name.toLowerCase().includes(query) ||
-                    app.email.toLowerCase().includes(query) ||
-                    app.passport.toLowerCase().includes(query) ||
-                    app.phone.includes(query);
-
-                const matchesStatus = !statusFilter || app.status === statusFilter;
-
-                return matchesSearch && matchesStatus;
-            });
-
-            // Apply sorting
-            currentSort.field = sortField;
-            sortApplications();
-            renderApplications();
-        }
-
-        function sortApplications() {
-            filteredApplications.sort((a, b) => {
-                let compareResult = 0;
-                switch(currentSort.field) {
-                    case 'name':
-                        compareResult = a.name.localeCompare(b.name);
-                        break;
-                    case 'status':
-                        compareResult = a.status.localeCompare(b.status);
-                        break;
-                    case 'submittedDate':
-                    default:
-                        compareResult = new Date(b.submittedDate) - new Date(a.submittedDate);
-                }
-                return currentSort.direction === 'asc' ? compareResult : -compareResult;
-            });
-        }
-
-        // Form Handling
-        async function handleSubmit(event) {
+        // Form submission handler
+        window.handleSubmit = async (event) => {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
 
-            if (!validateDate(formData.get('expiryDate'))) {
-                showToast('Passport must be valid for at least 6 months', 'error');
+            // Validate expiry date
+            if (!validateExpiryDate(formData.get('expiryDate'))) {
+                showToast('Invalid passport expiry date', 'error');
                 return;
             }
 
             const applicationData = {
+                userId: currentUser.uid,
                 name: formData.get('name'),
                 email: formData.get('email'),
                 passport: formData.get('passport').toUpperCase(),
@@ -1130,162 +584,124 @@ function renderApplications() {
             };
 
             try {
-                await addApplication(applicationData);
+                showLoading(true);
+                await addDoc(collection(db, 'applications'), applicationData);
                 form.reset();
+                showToast('Application submitted successfully', 'success');
             } catch (error) {
-                // Error already handled in addApplication
+                console.error('Submit error:', error);
+                showToast('Error submitting application: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
             }
-        }
-
-        // Validation Functions
-        function validateDate(date) {
-            const expiryDate = new Date(date);
-            const minDate = new Date();
-            minDate.setMonth(minDate.getMonth() + 6);
-            return expiryDate >= minDate;
-        }
-
-        // Editable Fields Management
-        function makeEditable(cell, value, field, id) {
-            const display = document.createElement('div');
-            display.textContent = value;
-            display.className = 'editable';
-            
-            display.onclick = () => {
-                const input = document.createElement(field === 'expiryDate' ? 'input' : 'input');
-                input.type = field === 'expiryDate' ? 'date' : 'text';
-                input.value = field === 'expiryDate' ? value.split('/').reverse().join('-') : value;
-                input.className = 'edit-input';
-
-                const saveChanges = async () => {
-                    const newValue = input.value;
-                    if (newValue !== value) {
-                        await updateApplication(id, { [field]: newValue });
-                    }
-                    cell.removeChild(input);
-                    display.style.display = 'block';
-                };
-
-                input.onblur = saveChanges;
-                input.onkeydown = (e) => {
-                    if (e.key === 'Enter') saveChanges();
-                    if (e.key === 'Escape') {
-                        cell.removeChild(input);
-                        display.style.display = 'block';
-                    }
-                };
-
-                display.style.display = 'none';
-                cell.appendChild(input);
-                input.focus();
-            };
-
-            cell.appendChild(display);
-        }
-
-        // Export Functions
-        function exportToEmail() {
-            const selected = getSelectedApplications();
-            if (selected.length === 0) {
-                showToast('Please select applications to export', 'error');
-                return;
-            }
-
-            let emailBody = 'Visa Applications Summary:\n\n';
-            selected.forEach(app => {
-                emailBody += `
-Applicant: ${app.name}
-Email: ${app.email}
-Passport: ${app.passport}
-Expiry: ${new Date(app.expiryDate).toLocaleDateString()}
-Status: ${app.status}
-Contact: ${app.phone}
-Submitted: ${new Date(app.submittedDate).toLocaleDateString()}
-------------------------
-`;
-            });
-
-            window.location.href = `mailto:?subject=Visa Applications Export&body=${encodeURIComponent(emailBody)}`;
-            showToast(`Prepared email with ${selected.length} application(s)`, 'success');
-        }
-
-        function exportToCSV() {
-            const selected = getSelectedApplications();
-            if (selected.length === 0) {
-                showToast('Please select applications to export', 'error');
-                return;
-            }
-
-            const headers = ['Name', 'Email', 'Passport', 'Expiry Date', 'Status', 'Phone', 'Submitted Date'];
-            const csv = [
-                headers.join(','),
-                ...selected.map(app => [
-                    app.name,
-                    app.email,
-                    app.passport,
-                    app.expiryDate,
-                    app.status,
-                    app.phone,
-                    new Date(app.submittedDate).toLocaleDateString()
-                ].join(','))
-            ].join('\n');
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'visa-applications.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            
-            showToast(`Exported ${selected.length} application(s) to CSV`, 'success');
-        }
-
-        // Selection Management
-        function getSelectedApplications() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]:checked');
-            return Array.from(checkboxes).map(cb => 
-                applications.find(app => app.id === cb.dataset.id)
-            );
-        }
-
-        function toggleAllCheckboxes(mainCheckbox) {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
-            checkboxes.forEach(cb => cb.checked = mainCheckbox.checked);
-        }
-
-        // Utility Functions
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Real-time Updates Handler
-        window.handleApplicationsUpdate = function(newApplications) {
-            applications = newApplications;
-            applyFilters();
         };
 
-        // Initialize Application
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeTheme();
-            updateOnlineStatus();
-            showToast('Welcome to QRS Visa Processing System', 'info');
-        });
+        // Date validation
+        function validateExpiryDate(dateString) {
+            const expiryDate = new Date(dateString);
+            const now = new Date();
+            const minDate = new Date();
+            minDate.setMonth(now.getMonth() + 6);
+            const maxDate = new Date();
+            maxDate.setFullYear(now.getFullYear() + 10);
 
-        // Online/Offline Event Listeners
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
+            return expiryDate >= minDate && expiryDate <= maxDate;
+        }
+
+        // Render applications table
+        function renderApplications() {
+            const tbody = document.getElementById('applicationsTable');
+            if (applications.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 20px;">
+                            No applications found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = applications.map(app => `
+                <tr>
+                    <td>${app.name}</td>
+                    <td>${app.email}</td>
+                    <td>${app.passport}</td>
+                    <td>${new Date(app.expiryDate).toLocaleDateString()}</td>
+                    <td>
+                        <span class="status-badge status-${app.status.toLowerCase()}">
+                            ${app.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="handleDelete('${app.id}')" class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Delete application
+        window.handleDelete = async (id) => {
+            if (!confirm('Are you sure you want to delete this application?')) {
+                return;
+            }
+
+            try {
+                showLoading(true);
+                await deleteDoc(doc(db, 'applications', id));
+                showToast('Application deleted successfully', 'success');
+            } catch (error) {
+                console.error('Delete error:', error);
+                showToast('Error deleting application: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        };
+
+        // Theme management
+        window.toggleTheme = () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        };
+
+        function updateThemeIcon(theme) {
+            const icon = document.querySelector('.theme-switcher i');
+            icon.className = `fas ${theme === 'light' ? 'fa-moon' : 'fa-sun'}`;
+        }
+
+        // Utility functions
+        function showToast(message, type = 'info') {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                className: `toast-${type}`,
+                stopOnFocus: true,
+                close: true
+            }).showToast();
+        }
+
+        function showLoading(show = true) {
+            document.querySelector('.loading-overlay').style.display = 
+                show ? 'flex' : 'none';
+        }
+
+        // Initialize theme on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+
+            // Add click handler for Google sign-in button
+            document.getElementById('googleSignInButton')
+                .addEventListener('click', handleGoogleSignIn);
+        });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.js"></script>
 </body>
 </html>
